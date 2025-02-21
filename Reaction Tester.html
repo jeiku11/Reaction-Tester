@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reaction Game</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <style>
+        body {
+            font-family: Verdana, Geneva, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        #game-area {
+            position: relative;
+            margin: 20px auto;
+            width: 80%;
+            max-width: 600px;
+            height: 400px;
+            background-color: #ffffff;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        #box {
+            position: absolute;
+            display: none;
+        }
+        .info {
+            margin: 10px;
+        }
+        .bold {
+            font-weight: bold;
+        }
+        #start-button {
+            margin: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        #start-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Your Reactions!</h1>
+    <p>Click the shapes as quickly as you can!</p>
+    <div class="info">
+        <p class="bold">Your Time: <span id="time">0</span>s</p>
+        <p class="bold">Best Time: <span id="best-time">--</span>s</p>
+    </div>
+    <button id="start-button">Start Game</button>
+    <div id="game-area">
+        <div id="box"></div>
+    </div>
+
+    <script>
+        function getRandomColor() {
+            const letters = "0123456789ABCDEF";
+            let color = "#";
+            for (let i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            return color;
+        }
+
+        let clickedTime, createdTime, reactionTime;
+        let bestTime = null;
+
+        function makeBox() {
+            const time = Math.random() * 3000 + 500; 
+
+            setTimeout(function() {
+                const size = Math.random() * 100 + 50; 
+                const shape = Math.random() > 0.5 ? "50%" : "0"; 
+                const top = Math.random() * (400 - size);
+                const left = Math.random() * (600 - size); 
+
+                $("#box").css({
+                    "width": size + "px",
+                    "height": size + "px",
+                    "border-radius": shape,
+                    "top": top + "px",
+                    "left": left + "px",
+                    "background-color": getRandomColor(),
+                    "display": "block"
+                });
+
+                createdTime = Date.now();
+            }, time);
+        }
+
+        $("#box").click(function() {
+            clickedTime = Date.now();
+            reactionTime = (clickedTime - createdTime) / 1000; 
+            $("#time").text(reactionTime);
+
+            if (bestTime === null || reactionTime < bestTime) {
+                bestTime = reactionTime;
+                $("#best-time").text(bestTime);
+            }
+
+            $(this).hide(); 
+            makeBox(); // Generate a new box
+        });
+
+        // Start the game
+        $("#start-button").click(function() {
+            $(this).hide(); // Hide the start button
+            makeBox();
+        });
+    </script>
+</body>
+</html>
